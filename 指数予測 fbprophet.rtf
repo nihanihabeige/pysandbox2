@@ -1,0 +1,182 @@
+{\rtf1\ansi\ansicpg932\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fnil\fcharset128 HiraginoSans-W5;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww22200\viewh12380\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b\fs20 \cf0 ########\'83\'89\'83\'43\'83\'75\'83\'89\'83\'8a\'82\'cc\'90\'dd\'92\'e8#############################\
+import quandl\
+import pandas as pd\
+import numpy as np\
+from matplotlib import pylab as plt\
+%matplotlib inline\
+from fbprophet import Prophet\
+from matplotlib.pylab import rcParams\
+rcParams['figure.figsize'] = 15, 6\
+quandl.ApiConfig.api_key = "azLaqoPWPG1syR3MmeLQ"\
+import cv2#\'89\'e6\'91\'9c\'82\'f0\'8c\'8b\'8d\'87\
+import glob#\'83\'66\'83\'42\'83\'8c\'83\'4e\'83\'67\'83\'8a\'93\'e0\'82\'cc\'83\'74\'83\'40\'83\'43\'83\'8b\'82\'f0\'92\'8a\'8f\'6f\
+from datetime import date, datetime, timedelta#\'93\'fa\'95\'74\'82\'f0\'8e\'e6\'93\'be\
+########\'93\'fa\'95\'74\'82\'cc\'90\'dd\'92\'e8##################################\
+past=date.today() - timedelta(365*3+1)#\'8e\'4f\'94\'4e\'91\'4f\'82\'cc\'93\'fa\'95\'74\'82\'f0\'8b\'4c\'8d\'da\
+########\'8c\'76\'8e\'5a\'82\'cc\'92\'e8\'8b\'60##################################\
+def calc(asset):\
+    m = Prophet(growth='logistic', weekly_seasonality=False, yearly_seasonality=True, daily_seasonality=True)\
+    df['cap'] = MAX \
+    m.fit(df);\
+    future = m.make_future_dataframe(periods=300) \
+    future['cap'] = MAX\
+    forecast = m.predict(future)\
+    m.plot(forecast);\
+    plt.xlim(['2018-01-01','2019-03-31'])\
+    plt.ylim([MIN,MAX])\
+    plt.legend()\
+    plt.title(asset, fontdict=\{"fontsize":18\})\
+    plt.subplots_adjust(top=0.9)\
+    filename=asset+"_prophet.png"\
+    plt.savefig("/Users/wn/index/"+filename) \
+\
+########\'93\'fa\'8c\'6f\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be##############################\
+df=quandl.get('Nikkei/Index',start_date=past)["Close Price"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Close Price': 'y', 'Date': 'ds'\})\
+MAX=25000\
+MIN=21000\
+calc("Nikkei225")\
+\
+########S&P500\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be###########################\
+df=quandl.get('CHRIS/CME_SP1',start_date=past) ["Last"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Last': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.05\
+MIN=df[-150:]["y"].min()*0.95\
+calc("S&P500")\
+\
+########\'90\'56\'8b\'bb\'8d\'91\'8a\'94\'8e\'ae\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be###########################\
+df = quandl.get("XJPX/16810_UADJ",start_date=past)["Close"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Close': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.05\
+MIN=df[-150:]["y"].min()*0.95\
+calc("Emerging market stock")\
+\
+########\'8b\'e0\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be#################################\
+df=quandl.get('LBMA/GOLD', start_date=past)\
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'USD (PM)': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.1\
+MIN=df[-150:]["y"].min()*0.9\
+calc("Gold price")\
+\
+########\'93\'ba\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be#################################\
+df=quandl.get('LME/PR_CU', start_date=past)\
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Cash Buyer': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.1\
+MIN=df[-150:]["y"].min()*0.9\
+calc("Copper price")\
+\
+########\'8c\'b4\'96\'fb\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be###########################\
+df =quandl.get('CHRIS/ICE_T1', start_date=past)["Settle"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Settle': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.2\
+MIN=df[-150:]["y"].min()*0.8\
+calc("WTI price")\
+\
+########Dollar index\'82\'cc\'8e\'e6\'93\'be################################\
+df=quandl.get('CHRIS/ICE_DX1', start_date=past)\
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Settle': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.1\
+MIN=df[-150:]["y"].min()*0.9\
+calc("Dollar index")\
+\
+########Yield Gap\'82\'cc\'8e\'e6\'93\'be################################\
+df=quandl.get('USTREASURY/YIELD', start_date=past)\
+df2=df ["10 YR"] -  df ["2 YR"] \
+df = pd.DataFrame(df2).reset_index()\
+df = df.rename(columns=\{0: 'y','Date': 'ds'\})\
+MAX=1\
+MIN=0\
+calc("yield gap of US   10YR - 2YR")\
+\
+########Bitcoin\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be#############################\
+df =quandl.get('BCHARTS/BITFLYERJPY', start_date=past) ["Close"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Close': 'y','Date': 'ds'\})\
+MAX=1500000\
+MIN=600000\
+calc("Bitcoin")\
+\
+########\'8f\'e3\'8a\'43\'91\'8d\'8d\'87\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be###########################\
+df = quandl.get("XJPX/13090_UADJ",start_date=past)["Close"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Close': 'y', 'Date': 'ds'\})\
+MAX=df[-150:]["y"].max()*1.1\
+MIN=df[-150:]["y"].min()*0.9\
+calc("China stock")\
+\
+\
+########\'89\'e6\'91\'9c\'82\'cc\'8c\'8b\'8d\'87####################################\
+FILE=[]\
+files = glob.glob('/Users/wn/index/*.*')\
+for file in files:\
+    FILE.append(file) \
+\
+img1 = cv2.imread(FILE[0])\
+img2 = cv2.imread(FILE[1])\
+img3 = cv2.imread(FILE[2])\
+img4 = cv2.imread(FILE[3])\
+img5 = cv2.imread(FILE[4])\
+img6 = cv2.imread(FILE[5])\
+img7 = cv2.imread(FILE[6])\
+img8 = cv2.imread(FILE[7])\
+img9 = cv2.imread(FILE[8])\
+\
+imgA = cv2.vconcat([img1, img2, img3])\
+imgB = cv2.vconcat([img4, img5, img6])\
+imgC = cv2.vconcat([img7, img8, img9])\
+imgZ = cv2.hconcat([imgA, imgB, imgC])\
+cv2.imwrite('indexes.jpg', imgZ)\
+\
+\
+\
+\
+\
+########TBound_10Y\'82\'cc\'8e\'e6\'93\'be############################\
+#df =quandl.get('USTREASURY/YIELD', start_date=past)["10 YR"] \
+#df = pd.DataFrame(df).reset_index()\
+#df = df.rename(columns=\{'10 YR': 'y', 'Date': 'ds'\})\
+#MAX=df[-150:]["y"].max()*1.1\
+#MIN=df[-150:]["y"].min()*0.9\
+#calc("T-Bond 10Y")\
+\
+########TBound_2Y\'82\'cc\'8e\'e6\'93\'be############################\
+#df =quandl.get('USTREASURY/YIELD', start_date=past) ["2 YR"] \
+#df = pd.DataFrame(df).reset_index()\
+#df = df.rename(columns=\{'2 YR': 'y','Date': 'ds'\})\
+#MAX=df[-150:]["y"].max()*1.1\
+#MIN=df[-150:]["y"].min()*0.9\
+#calc("T-Bond 2Y")\
+\
+########\'8f\'e3\'8a\'43\'91\'8d\'8d\'87\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be###########################\
+#df = quandl.get("XJPX/13090_UADJ",start_date=past)["Close"] \
+#df = pd.DataFrame(df).reset_index()\
+#df = df.rename(columns=\{'Close': 'y', 'Date': 'ds'\})\
+#MAX=df[-150:]["y"].max()*1.1\
+#MIN=df[-150:]["y"].min()*0.9\
+#calc("China stock")\
+\
+########TRY/USD\'83\'66\'81\'5b\'83\'5e\'82\'cc\'8e\'e6\'93\'be###########################\
+df=quandl.get('CHRIS/CME_TRY1',start_date=past)["Settle"] \
+df = pd.DataFrame(df).reset_index()\
+df = df.rename(columns=\{'Settle': 'y', 'Date': 'ds'\})\
+df["y"]=1/df['y']\
+MAX=0.5\
+MIN=0\
+calc("TRY-USD")\
+\
+\
+}
